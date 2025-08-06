@@ -1,6 +1,6 @@
 import Logo from '@/assets/icons/Logo';
 
-const Footer = () => {
+export default function Footer() {
   return (
     <footer>
       <div className='mx-auto container space-y-8 px-4 py-16'>
@@ -316,6 +316,4 @@ const Footer = () => {
       </div>
     </footer>
   );
-};
-
-export default Footer;
+}
