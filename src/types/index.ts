@@ -1,5 +1,6 @@
 export type {
     ISendOtp,
+    IVerifyOtp,
     ILogin,
     IRegister,
 } from "./auth.types"

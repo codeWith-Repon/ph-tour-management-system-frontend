@@ -63,17 +63,11 @@ export function RegisterForm({
 
     try {
       const result = await register(userInfo).unwrap();
-      toast.success(result.message);
+      toast.success('Registration successful! Please verify your email.');
       navigate('/verify');
       console.log('Registration successful:', result);
     } catch (error) {
       console.error('Registration error:', error);
-      
-      if (error.status === 400) {
-        toast.error('Email already exists');
-      } else {
-        toast.error('Registration failed, please try again later');
-      }
     }
   };
 
