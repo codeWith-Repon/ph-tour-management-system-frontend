@@ -16,6 +16,7 @@ import { useLoginMutation } from '@/redux/features/auth/auth.api';
 import z from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { toast } from 'sonner';
 
 const loginSchema = z.object({
   email: z.email(),
@@ -45,17 +46,16 @@ export function LoginForm({
     console.log(data);
     try {
       const result = await Login(userInfo).unwrap();
-
+      toast.success(result.message);
       console.log('Login successful:', result);
     } catch (error) {
       console.error('Login error:', error);
       if (error.status === 401) {
+        toast.error('Invalid email or password');
         navigate('/verify', { state: data.email });
-        console.log(error.message);
       }
     }
   };
-
 
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>

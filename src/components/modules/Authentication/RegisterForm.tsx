@@ -16,6 +16,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Password from '@/components/ui/Password';
 import { useRegisterMutation } from '@/redux/features/auth/auth.api';
+import { toast } from 'sonner';
 
 const registerSchema = z
   .object({
@@ -62,10 +63,17 @@ export function RegisterForm({
 
     try {
       const result = await register(userInfo).unwrap();
+      toast.success(result.message);
       navigate('/verify');
       console.log('Registration successful:', result);
     } catch (error) {
       console.error('Registration error:', error);
+      
+      if (error.status === 400) {
+        toast.error('Email already exists');
+      } else {
+        toast.error('Registration failed, please try again later');
+      }
     }
   };
 
