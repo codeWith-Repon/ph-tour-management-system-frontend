@@ -6,7 +6,7 @@ const authApi = baseApi.injectEndpoints({
             query: (userInfo) => ({
                 url: "/user/register",
                 method: "POST",
-                body: userInfo
+                data: userInfo
             })
         })
     })
