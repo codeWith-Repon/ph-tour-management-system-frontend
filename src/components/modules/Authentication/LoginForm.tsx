@@ -50,11 +50,12 @@ export function LoginForm({
     } catch (error) {
       console.error('Login error:', error);
       if (error.status === 401) {
-        navigate('/verify');
+        navigate('/verify', { state: data.email });
         console.log(error.message);
       }
     }
   };
+
 
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
