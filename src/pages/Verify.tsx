@@ -32,6 +32,7 @@ import {
   useVerifyOtpMutation,
 } from '@/redux/features/auth/auth.api';
 import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
 
 const FormSchema = z.object({
   pin: z.string().min(6, {
@@ -43,9 +44,10 @@ const Verify = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [email] = useState(location.state);
-  const [confirm, setConfirm] = useState(false);
+  const [confirmed, setConfirmed] = useState(false);
   const [sendOtp] = useSendOtpMutation();
   const [verifyOtp] = useVerifyOtpMutation();
+  const [timer, setTimer] = useState(120);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -54,14 +56,16 @@ const Verify = () => {
     },
   });
 
-  const handleConfirm = async () => {
+  const handleSendOtp = async () => {
     const toastId = toast.loading('Sending OTP...');
+
     try {
       const res = await sendOtp({ email }).unwrap();
 
       if (res.success) {
         toast.success('OTP Sent!', { id: toastId });
-        setConfirm(true);
+        setConfirmed(true);
+        setTimer(120);
       }
     } catch (error) {
       console.log(error);
@@ -79,7 +83,7 @@ const Verify = () => {
 
       if (res.success) {
         toast.success('OTP Verified!', { id: toastId });
-        setConfirm(true);
+        setConfirmed(true);
       }
     } catch (error) {
       console.log(error);
@@ -94,9 +98,21 @@ const Verify = () => {
   //   }
   // }, [email]);
 
+  useEffect(() => {
+    if (!email || !confirmed) {
+      return;
+    }
+
+    const timerId = setInterval(() => {
+      setTimer((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+
+    return () => clearInterval(timerId);
+  }, [email, confirmed]);
+
   return (
     <div className='grid place-content-center h-screen'>
-      {confirm ? (
+      {confirmed ? (
         <Card>
           <CardHeader>
             <CardTitle className='text-xl'>Verify your email address</CardTitle>
@@ -140,7 +156,21 @@ const Verify = () => {
                           </InputOTPGroup>
                         </InputOTP>
                       </FormControl>
-                      <FormDescription></FormDescription>
+                      <FormDescription>
+                        <Button
+                          onClick={handleSendOtp}
+                          type='button'
+                          variant={'link'}
+                          disabled={timer !== 0}
+                          className={cn('p-0 m-0', {
+                            'cursor-pointer': timer === 0,
+                            'text-gray-500': timer !== 0,
+                          })}
+                        >
+                          Resend OTP:
+                        </Button>{' '}
+                        {timer}
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -165,7 +195,7 @@ const Verify = () => {
 
           <CardFooter className='flex justify-end'>
             <Button
-              onClick={handleConfirm}
+              onClick={handleSendOtp}
               className='w-[300px]'
               form='otp-form'
               type='submit'

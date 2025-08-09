@@ -50,7 +50,11 @@ export function LoginForm({
       console.log('Login successful:', result);
     } catch (error) {
       console.error('Login error:', error);
-      if (error.status === 401) {
+
+      if (error.data.message === 'Password does not match') {
+        toast.error('Invalid credentials');
+      }
+      if (error.data.message === 'User is not verified') {
         toast.error('Your account is not verified');
         navigate('/verify', { state: data.email });
       }
