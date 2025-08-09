@@ -44,11 +44,14 @@ export function LoginForm({
       email: data.email,
       password: data.password,
     };
-    console.log(data);
+    // console.log(data);
     try {
       const result = await Login(userInfo).unwrap();
-      toast.success(result.message);
-      console.log('Login successful:', result);
+
+      if (result.success) {
+        toast.success(result.message);
+        navigate('/');
+      }
     } catch (error) {
       console.error('Login error:', error);
 
