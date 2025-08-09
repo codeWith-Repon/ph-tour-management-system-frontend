@@ -17,6 +17,7 @@ import z from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
+import config from '@/config';
 
 const loginSchema = z.object({
   email: z.email(),
@@ -124,6 +125,7 @@ export function LoginForm({
           type='button'
           variant='outline'
           className='w-full cursor-pointer'
+          onClick={() => window.open(`${config.baseUrl}/auth/google`)}
         >
           Login with Google
         </Button>
