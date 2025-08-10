@@ -33,8 +33,8 @@ export default function Navbar() {
   const dispatch = useAppDispatch();
 
   console.log(data);
-  const handleLogout = () => {
-    logout(undefined);
+  const handleLogout = async () => {
+    await logout(undefined);
     dispatch(authApi.util.resetApiState());
     toast.success('Logout successful');
   };
@@ -118,7 +118,7 @@ export default function Navbar() {
         {/* Right side */}
         <div className='flex items-center gap-2'>
           <ModeToggle />
-          {data?.data?.email ? (
+          {data?.data?.email && (
             <Button
               onClick={handleLogout}
               variant='outline'
@@ -126,7 +126,8 @@ export default function Navbar() {
             >
               Logout
             </Button>
-          ) : (
+          )}
+          {!data?.data?.email && (
             <Button asChild className='text-sm'>
               <Link to='/login'>Login</Link>
             </Button>

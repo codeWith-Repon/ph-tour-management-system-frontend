@@ -21,9 +21,9 @@ export const authApi = baseApi.injectEndpoints({
         logout: builder.mutation({
             query: () => ({
                 url: "/auth/logout",
-                method: "POST"
+                method: "POST",
             }),
-            invalidatesTags: ["User"]
+            invalidatesTags: ["USER"],
         }),
         sendOtp: builder.mutation<IResponse<null>, ISendOtp>({
             query: (userInfo) => ({
@@ -44,7 +44,7 @@ export const authApi = baseApi.injectEndpoints({
                 url: "/user/me",
                 method: "GET"
             }),
-            providesTags: ["User"]
+            providesTags: ["USER"],
         })
     })
 })
