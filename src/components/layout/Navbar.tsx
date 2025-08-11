@@ -27,6 +27,7 @@ const navigationLinks = [
   { href: '/', label: 'Home', role: 'PUBLIC' },
   { href: '/about', label: 'About', role: 'PUBLIC' },
   { href: '/admin', label: 'Dashboard', role: role.admin },
+  { href: '/admin', label: 'Dashboard', role: role.superAdmin },
   { href: '/user', label: 'Dashboard', role: role.user },
 ];
 
