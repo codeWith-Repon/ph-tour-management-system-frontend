@@ -32,7 +32,6 @@ export default function Navbar() {
   const [logout] = useLogoutMutation();
   const dispatch = useAppDispatch();
 
-  console.log(data);
   const handleLogout = () => {
     logout(undefined);
     dispatch(authApi.util.resetApiState());
