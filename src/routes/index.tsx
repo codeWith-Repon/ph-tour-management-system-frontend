@@ -32,6 +32,10 @@ export const router = createBrowserRouter([
         Component: AddTour,
         path: 'add-tour',
       },
+      {
+        Component: AddTour,
+        path: 'add-tour-type',
+      },
     ],
   },
   {
