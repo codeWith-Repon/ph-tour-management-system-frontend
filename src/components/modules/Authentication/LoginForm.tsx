@@ -36,8 +36,8 @@ export function LoginForm({
     defaultValues:
       config.NODE_ENV === 'development'
         ? {
-            email: 'repon7253@gmail.com',
-            password: 'R@123456',
+            email: 'superadmin@gmail.com',
+            password: '12345678',
           }
         : {
             email: '',
