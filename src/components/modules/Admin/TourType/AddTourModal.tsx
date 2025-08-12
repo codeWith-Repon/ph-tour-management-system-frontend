@@ -17,26 +17,29 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useAddTourTypeMutation } from '@/redux/features/Tour/tour.api';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 export function AddTourTypeModal() {
+  const [onOpen, setOnOpen] = useState(false);
   const form = useForm();
   const [addTourType] = useAddTourTypeMutation();
 
   const onSubmit = async (data) => {
-    const res = await addTourType(data).unwrap();
-    console.log(res)
-    if (!res.success) {
-      toast.error(res.message || 'Failed to add Tour Type');
-      return;
+    try {
+      const res = await addTourType(data).unwrap();
+      toast.success(res.message || 'Tour Type added successfully');
+      setOnOpen(false);
+      form.reset();
+    } catch (error) {
+      console.log(error);
+      toast.error(error.data.message || 'Failed to add Tour Type');
     }
-    toast.success('Tour Type added successfully');
-    form.reset();
   };
 
   return (
-    <Dialog>
+    <Dialog open={onOpen} onOpenChange={setOnOpen}>
       <form>
         <DialogTrigger asChild>
           <Button>Add Tour Type</Button>
@@ -63,7 +66,14 @@ export function AddTourTypeModal() {
           </Form>
           <DialogFooter>
             <DialogClose asChild>
-              <Button variant='outline'>Cancel</Button>
+              <Button
+                variant='outline'
+                onClick={() => {
+                  form.reset();
+                }}
+              >
+                Cancel
+              </Button>
             </DialogClose>
             <Button form='add-tour-type' type='submit'>
               Save
