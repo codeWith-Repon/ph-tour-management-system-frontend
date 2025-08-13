@@ -1,3 +1,4 @@
+import SingleImageUploader from '@/components/SingleImageUploader';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -20,23 +21,26 @@ import { Textarea } from '@/components/ui/textarea';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-
 export function AddDivisionModal() {
   const [onOpen, setOnOpen] = useState(false);
+  const [image, setImage] = useState<File | null>(null);
+
   const form = useForm({
     defaultValues: {
       name: '',
       description: '',
-    }
+    },
   });
 
   const onSubmit = async (data) => {
     try {
-     console.log(data)
+      console.log(data);
     } catch (error) {
       console.log(error);
     }
   };
+
+  console.log('inside modal', image);
 
   return (
     <Dialog open={onOpen} onOpenChange={setOnOpen}>
@@ -78,6 +82,7 @@ export function AddDivisionModal() {
               )}
             />
           </form>
+          <SingleImageUploader onChange={setImage} />
         </Form>
         <DialogFooter>
           <DialogClose asChild>
