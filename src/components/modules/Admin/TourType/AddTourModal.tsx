@@ -23,7 +23,11 @@ import { toast } from 'sonner';
 
 export function AddTourTypeModal() {
   const [onOpen, setOnOpen] = useState(false);
-  const form = useForm();
+  const form = useForm({
+    defaultValues: {
+      name: '',
+    },
+  });
   const [addTourType] = useAddTourTypeMutation();
 
   const onSubmit = async (data) => {
