@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import SingleImageUploader from '@/components/SingleImageUploader';
 import { Button } from '@/components/ui/button';
 import {
@@ -18,24 +19,44 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { useAddDivisionMutation } from '@/redux/features/division/division.api';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+
+type DivisionFormValues = {
+  name: string;
+  description: string;
+};
 
 export function AddDivisionModal() {
   const [onOpen, setOnOpen] = useState(false);
   const [image, setImage] = useState<File | null>(null);
+  const [addDivision] = useAddDivisionMutation();
 
-  const form = useForm({
+  const form = useForm<DivisionFormValues>({
     defaultValues: {
       name: '',
       description: '',
     },
   });
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data: DivisionFormValues) => {
+    const id = toast.loading('Adding Division...');
     try {
-      console.log(data);
-    } catch (error) {
+      const formData = new FormData();
+      formData.append('data', JSON.stringify(data));
+      formData.append('file', image as File);
+
+      const res = await addDivision(formData).unwrap();
+      console.log(res);
+      toast.success('Division Added Successfully', { id });
+      setOnOpen(false);
+      //   console.log(formData.get('data'));
+      //   console.log(formData.get('file'));
+    } catch (error: any) {
+      toast.error(error?.data?.message || 'Failed to add Division', { id });
+
       console.log(error);
     }
   };
@@ -95,7 +116,7 @@ export function AddDivisionModal() {
               Cancel
             </Button>
           </DialogClose>
-          <Button form='add-division' type='submit'>
+          <Button disabled={!image} form='add-division' type='submit'>
             Save
           </Button>
         </DialogFooter>
