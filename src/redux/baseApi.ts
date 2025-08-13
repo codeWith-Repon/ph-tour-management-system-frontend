@@ -8,6 +8,6 @@ export const baseApi = createApi({
     //     baseUrl: config.baseUrl,         ///when you wan't to use fetch base query not axios
     //     credentials: "include"
     // }),
-    tagTypes: ["User", "TOUR"],
+    tagTypes: ["USER", "TOUR"],
     endpoints: () => ({}),
 })
