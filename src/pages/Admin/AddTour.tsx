@@ -32,18 +32,27 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import type { FileMetadata } from '@/hooks/use-file-upload';
 import { cn } from '@/lib/utils';
 import { useGetDivisionQuery } from '@/redux/features/division/division.api';
-import { useGetTourTypesQuery } from '@/redux/features/Tour/tour.api';
+import {
+  useAddTourMutation,
+  useGetTourTypesQuery,
+} from '@/redux/features/Tour/tour.api';
 import { format, formatISO } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
+import { useState } from 'react';
 import { useForm, type FieldValues, type SubmitHandler } from 'react-hook-form';
 
 export default function AddTour() {
+  const [images, setImages] = useState<(File | FileMetadata)[] | []>([]);
+  console.log(images);
+
   const { data: tourTypeData, isLoading: tourTypeLoading } =
     useGetTourTypesQuery(undefined);
   const { data: divisionData, isLoading: divisionLoading } =
     useGetDivisionQuery(undefined);
+  const [AddTour] = useAddTourMutation();
 
   const divisionOptions = divisionData?.data?.map(
     (item: { _id: string; name: string }) => ({
@@ -72,13 +81,24 @@ export default function AddTour() {
     },
   });
 
-  const handleSubmit: SubmitHandler<FieldValues> = (data) => {
+  const handleSubmit: SubmitHandler<FieldValues> = async (data) => {
     const tourData = {
       ...data,
       startDate: formatISO(data.startDate),
       endDate: formatISO(data.endDate),
     };
-    console.log(tourData);
+
+    const formData = new FormData();
+
+    formData.append('data', JSON.stringify(tourData));
+    images.forEach((image) => formData.append('files', image as File));
+
+    try {
+      const res = await AddTour(formData).unwrap();
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -317,7 +337,7 @@ export default function AddTour() {
                   )}
                 />
                 <div className='flex-1 mt-5'>
-                  <MultipleImageUploader />
+                  <MultipleImageUploader onChange={setImages} />
                 </div>
               </div>
             </form>
