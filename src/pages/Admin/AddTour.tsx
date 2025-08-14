@@ -1,3 +1,4 @@
+import MultipleImageUploader from '@/components/MultipleImageUploader';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 
@@ -315,6 +316,9 @@ export default function AddTour() {
                     </FormItem>
                   )}
                 />
+                <div className='flex-1 mt-5'>
+                  <MultipleImageUploader />
+                </div>
               </div>
             </form>
           </Form>
