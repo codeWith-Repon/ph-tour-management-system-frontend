@@ -1,4 +1,7 @@
-import { useGetTourTypesQuery } from '@/redux/features/Tour/tour.api';
+import {
+  useGetTourTypesQuery,
+  useRemoveTourTypeMutation,
+} from '@/redux/features/Tour/tour.api';
 import {
   Table,
   TableBody,
@@ -10,9 +13,25 @@ import {
 import { Button } from '@/components/ui/button';
 import { Trash2 } from 'lucide-react';
 import { AddTourTypeModal } from '@/components/modules/Admin/TourType/AddTourModal';
+import { DeleteConfirmation } from '@/components/DeleteConfirmation';
+import { toast } from 'sonner';
 
 const AddTourType = () => {
   const { data } = useGetTourTypesQuery(undefined);
+  const [removeTourType] = useRemoveTourTypeMutation();
+
+  const handleRemoveTourType = async (torTypeId: string) => {
+    const toastId = toast.loading('Removing.....');
+    try {
+      const res = await removeTourType(torTypeId);
+
+      if (res.data.success) {
+        toast.success(res.data.message, { id: toastId });
+      }
+    } catch (error) {
+      toast.error('Failed to remove tour type', { id: toastId });
+    }
+  };
 
   // console.log(data);
   return (
@@ -30,15 +49,19 @@ const AddTourType = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data?.data?.map((item: { name: string }) => (
-              <TableRow key={item.name}>
+            {data?.data?.map((item: { _id: string; name: string }) => (
+              <TableRow key={item._id}>
                 <TableCell className='font-medium w-full'>
                   {item.name}
                 </TableCell>
                 <TableCell className='font-medium'>
-                  <Button size='sm'>
-                    <Trash2 />
-                  </Button>
+                  <DeleteConfirmation
+                    onConfirm={() => handleRemoveTourType(item._id)}
+                  >
+                    <Button size='sm'>
+                      <Trash2 />
+                    </Button>
+                  </DeleteConfirmation>
                 </TableCell>
               </TableRow>
             ))}
