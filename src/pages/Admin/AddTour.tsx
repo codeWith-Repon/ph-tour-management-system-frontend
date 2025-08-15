@@ -40,9 +40,14 @@ import {
   useGetTourTypesQuery,
 } from '@/redux/features/Tour/tour.api';
 import { format, formatISO } from 'date-fns';
-import { CalendarIcon } from 'lucide-react';
+import { CalendarIcon, Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
-import { useForm, type FieldValues, type SubmitHandler } from 'react-hook-form';
+import {
+  useFieldArray,
+  useForm,
+  type FieldValues,
+  type SubmitHandler,
+} from 'react-hook-form';
 
 export default function AddTour() {
   const [images, setImages] = useState<(File | FileMetadata)[] | []>([]);
@@ -78,27 +83,47 @@ export default function AddTour() {
       costFrom: '',
       startDate: '',
       endDate: '',
+      included: [{ value: '' }],
+      excluded: [{ value: '' }],
     },
   });
 
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: 'included',
+  });
+
+  const {
+    fields: excludedFields,
+    append: excludedAppend,
+    remove: excludedRemove,
+  } = useFieldArray({
+    control: form.control,
+    name: 'excluded',
+  });
+  console.log(fields);
   const handleSubmit: SubmitHandler<FieldValues> = async (data) => {
     const tourData = {
       ...data,
       startDate: formatISO(data.startDate),
       endDate: formatISO(data.endDate),
+      included: data.included.map((item: { value: string }) => item.value),
+      excluded: data.excluded.map((item: { value: string }) => item.value),
     };
+
+    console.log(tourData);
 
     const formData = new FormData();
 
     formData.append('data', JSON.stringify(tourData));
     images.forEach((image) => formData.append('files', image as File));
 
-    try {
-      const res = await AddTour(formData).unwrap();
-      console.log(res);
-    } catch (error) {
-      console.log(error);
-    }
+    // try {
+    //   const res = await AddTour(formData).unwrap();
+    //   console.log(res);
+    // } catch (error) {
+    //   console.log(error);
+    // }
   };
 
   return (
@@ -340,6 +365,90 @@ export default function AddTour() {
                   <MultipleImageUploader onChange={setImages} />
                 </div>
               </div>
+              <div className='border-t border-muted w-full'></div>
+              <div>
+                <div className='flex items-center justify-between'>
+                  <p className='font-semibold'>Included</p>
+                  <Button
+                    type='button'
+                    size='icon'
+                    variant='outline'
+                    onClick={() => append({ value: '' })}
+                  >
+                    <Plus />
+                  </Button>
+                </div>
+
+                <div className='space-y-4 mt-4'>
+                  {fields.map((item, index) => (
+                    <div className=' flex gap-2' key={item.id}>
+                      <FormField
+                        control={form.control}
+                        name={`included.${index}.value`}
+                        render={({ field }) => (
+                          <FormItem className='flex-1'>
+                            <FormControl>
+                              <Input {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <Button
+                        onClick={() => remove(index)}
+                        variant='destructive'
+                        size='icon'
+                        type='button'
+                      >
+                        <Trash2 />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <div className='flex items-center justify-between'>
+                  <p className='font-semibold'>Excluded</p>
+                  <Button
+                    type='button'
+                    size='icon'
+                    variant='outline'
+                    onClick={() => excludedAppend({ value: '' })}
+                  >
+                    <Plus />
+                  </Button>
+                </div>
+
+                <div className='space-y-4 mt-4'>
+                  {excludedFields.map((item, index) => (
+                    <div className=' flex gap-2' key={item.id}>
+                      <FormField
+                        control={form.control}
+                        name={`excluded.${index}.value`}
+                        render={({ field }) => (
+                          <FormItem className='flex-1'>
+                            <FormControl>
+                              <Input {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <Button
+                        onClick={() => excludedRemove(index)}
+                        variant='destructive'
+                        size='icon'
+                        type='button'
+                      >
+                        <Trash2 />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              
             </form>
           </Form>
         </CardContent>
