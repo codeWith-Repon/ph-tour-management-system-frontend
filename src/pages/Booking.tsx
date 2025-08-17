@@ -12,7 +12,8 @@ const Booking = () => {
   const { id } = useParams();
 
   const { data, isLoading, isError } = useGetAllToursQuery({ _id: id });
-  const [createBooking] = useCreateBookingMutation();
+  const [createBooking, { isLoading: createBookingLoading }] =
+    useCreateBookingMutation();
 
   const tourData = data?.data[0];
 
@@ -179,8 +180,16 @@ const Booking = () => {
                   </div>
                 </div>
 
-                <Button onClick={handleBooking} className='w-full' size='lg'>
-                  Book Now
+                <Button
+                  onClick={handleBooking}
+                  disabled={createBookingLoading}
+                  className='w-full flex items-center justify-center gap-4 disabled:opacity-50'
+                  size='lg'
+                >
+                  {createBookingLoading && (
+                    <span className='animate-spin rounded-full h-5 w-5 border-b-2 border-white' />
+                  )}
+                  {createBookingLoading ? 'Booking...' : 'Book Now'}
                 </Button>
               </div>
             </div>
