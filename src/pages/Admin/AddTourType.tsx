@@ -24,10 +24,11 @@ import { AddTourTypeModal } from '@/components/modules/Admin/TourType/AddTourMod
 import { DeleteConfirmation } from '@/components/DeleteConfirmation';
 import { toast } from 'sonner';
 import { useState } from 'react';
+import { getPaginationRange } from '@/utils/getPagination';
 
 const AddTourType = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const { data } = useGetTourTypesQuery({ page: currentPage, limit: 2 });
+  const { data } = useGetTourTypesQuery({ page: currentPage, limit: 1 });
   const [removeTourType] = useRemoveTourTypeMutation();
   const totalPage = data?.meta?.totalPage || 1;
   console.log(data);
@@ -97,17 +98,25 @@ const AddTourType = () => {
                     }
                   />
                 </PaginationItem>
-                {Array.from({ length: totalPage }, (_, index) => (
-                  <PaginationItem key={index}>
-                    <PaginationLink
-                      className='cursor-pointer'
-                      onClick={() => setCurrentPage(index + 1)}
-                      isActive={index + 1 === currentPage}
-                    >
-                      {index + 1}
-                    </PaginationLink>
-                  </PaginationItem>
-                ))}
+
+                {getPaginationRange(totalPage, currentPage).map(
+                  (page, index) => (
+                    <PaginationItem key={index}>
+                      {page === '...' ? (
+                        <span className='px-2'>...</span>
+                      ) : (
+                        <PaginationLink
+                          className='cursor-pointer'
+                          onClick={() => setCurrentPage(page as number)}
+                          isActive={page === currentPage}
+                        >
+                          {page}
+                        </PaginationLink>
+                      )}
+                    </PaginationItem>
+                  )
+                )}
+
                 <PaginationItem>
                   <PaginationNext
                     onClick={() => setCurrentPage((prev) => prev + 1)}
@@ -123,6 +132,7 @@ const AddTourType = () => {
           )}
         </div>
       </div>
+      {/* </div> */}
     </div>
   );
 };
