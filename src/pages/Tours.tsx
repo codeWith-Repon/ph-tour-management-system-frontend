@@ -1,11 +1,17 @@
 import TourFilter from '@/components/modules/Tours/TourFilter';
 import { Button } from '@/components/ui/button';
 import { useGetAllToursQuery } from '@/redux/features/Tour/tour.api';
-import { Link } from 'react-router';
+import { Link, useSearchParams } from 'react-router';
 
 export default function Tours() {
+  const [searchParams] = useSearchParams();
+
+  const division = searchParams.get('division');
+  const tourType = searchParams.get('tourType');
+
   const { data } = useGetAllToursQuery({
-    undefined,
+    division,
+    tourType
   });
 
   return (

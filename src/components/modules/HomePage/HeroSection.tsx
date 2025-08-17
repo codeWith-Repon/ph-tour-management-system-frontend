@@ -1,8 +1,32 @@
 import { Button } from '@/components/ui/button';
 import Logo from '@/assets/icons/Logo';
 import { Link } from 'react-router';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { useGetDivisionQuery } from '@/redux/features/division/division.api';
+import { useState } from 'react';
 
 export default function HeroSection() {
+  const [selectedDivision, setSelectedDivision] = useState<string | undefined>(
+    undefined
+  );
+  const { data: divisionData, isLoading: divisionLoading } =
+    useGetDivisionQuery(undefined);
+
+  const divisionOptions = divisionData?.data.map(
+    (item: { _id: string; name: string }) => ({
+      label: item.name,
+      value: item._id,
+    })
+  );
+
   return (
     <section className='relative overflow-hidden py-32 min-h-screen'>
       <div className='absolute inset-x-0 top-0 flex h-full w-full items-center justify-center opacity-100'>
@@ -30,9 +54,37 @@ export default function HeroSection() {
               </p>
             </div>
             <div className='mt-6 flex justify-center gap-3'>
-              <Button asChild>
-                <Link to={'/tours'}>Explore</Link>
-              </Button>
+              <Select onValueChange={(value) => setSelectedDivision(value)}>
+                <SelectTrigger className='w-[300px]'>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Division</SelectLabel>
+                    {divisionLoading ? (
+                      <SelectItem value='loading' disabled>
+                        Loading...
+                      </SelectItem>
+                    ) : (
+                      divisionOptions?.map(
+                        (item: { label: string; value: string }) => (
+                          <SelectItem key={item.value} value={item.value}>
+                            {item.label}
+                          </SelectItem>
+                        )
+                      )
+                    )}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+
+              {selectedDivision ? (
+                <Button asChild>
+                  <Link to={`/tours?division=${selectedDivision}`}>Search</Link>
+                </Button>
+              ) : (
+                <Button disabled>Search</Button>
+              )}
             </div>
           </div>
         </div>
