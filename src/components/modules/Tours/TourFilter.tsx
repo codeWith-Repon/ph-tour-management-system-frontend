@@ -11,15 +11,15 @@ import {
 } from '@/components/ui/select';
 import { useGetDivisionQuery } from '@/redux/features/division/division.api';
 import { useGetTourTypesQuery } from '@/redux/features/Tour/tour.api';
-import { useState } from 'react';
+import { useSearchParams } from 'react-router';
 
 const TourFilter = () => {
-  const [selectedDivision, setSelectedDivision] = useState<string | undefined>(
-    undefined
-  );
-  const [selectedTourType, setSelectedTourType] = useState<string | undefined>(
-    undefined
-  );
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const selectedDivision = searchParams.get('division') || undefined;
+  const selectedTourType = searchParams.get('tourType') || undefined;
+
+  console.log(selectedDivision, 'Y', selectedTourType);
 
   const { data: divisionData, isLoading: divisionLoading } =
     useGetDivisionQuery(undefined);
@@ -41,9 +41,24 @@ const TourFilter = () => {
     })
   );
 
+  const handleDivisionChange = (value: string) => {
+    const params = new URLSearchParams(searchParams);
+    params.set('division', value);
+    // console.log(params.get("division"));
+    setSearchParams(params);
+  };
+
+  const handleTourTypeChange = (value: string) => {
+    const params = new URLSearchParams(searchParams);
+    params.set('tourType', value);
+    setSearchParams(params);
+  };
+
   const handleClearFilter = () => {
-    setSelectedDivision(undefined);
-    setSelectedTourType(undefined);
+    const params = new URLSearchParams();
+    params.delete('division');
+    params.delete('tourType');
+    setSearchParams(params);
   };
 
   return (
@@ -57,8 +72,8 @@ const TourFilter = () => {
       <div>
         <Label className='mb-2'>Division to visit</Label>
         <Select
-          onValueChange={(value) => setSelectedDivision(value)}
-          value={selectedDivision}
+          onValueChange={handleDivisionChange}
+          value={selectedDivision ? selectedDivision : ''}
         >
           <SelectTrigger className='w-full'>
             <SelectValue />
@@ -86,7 +101,10 @@ const TourFilter = () => {
 
       <div>
         <Label className='mb-2'>Tour Type</Label>
-        <Select onValueChange={(value) => setSelectedTourType(value)}>
+        <Select
+          onValueChange={handleTourTypeChange}
+          value={selectedTourType ? selectedTourType : ''}
+        >
           <SelectTrigger className='w-full'>
             <SelectValue />
           </SelectTrigger>
