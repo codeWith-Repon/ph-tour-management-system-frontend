@@ -13,10 +13,11 @@ export const tourApi = baseApi.injectEndpoints({
             invalidatesTags: ["TOUR"]
         }),
         getAllTours: builder.query<
-            { data: ITourPackage[]; meta?: IMeta }, void>({
-                query: () => ({
+            { data: ITourPackage[]; meta?: IMeta }, unknown>({
+                query: (params) => ({
                     url: "/tour",
                     method: "GET",
+                    params
                 }),
                 providesTags: ["TOUR"],
                 transformResponse: (response: IResponse<ITourPackage[]>) => {
