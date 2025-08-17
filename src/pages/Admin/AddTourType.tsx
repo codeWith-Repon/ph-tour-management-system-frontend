@@ -28,7 +28,7 @@ import { getPaginationRange } from '@/utils/getPagination';
 
 const AddTourType = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const { data } = useGetTourTypesQuery({ page: currentPage, limit: 1 });
+  const { data } = useGetTourTypesQuery({ page: currentPage });
   const [removeTourType] = useRemoveTourTypeMutation();
   const totalPage = data?.meta?.totalPage || 1;
   console.log(data);
