@@ -1,4 +1,5 @@
 import { baseApi } from "@/redux/baseApi";
+import type { IMeta, IResponse, ITourPackage } from "@/types";
 
 
 export const tourApi = baseApi.injectEndpoints({
@@ -11,13 +12,20 @@ export const tourApi = baseApi.injectEndpoints({
             }),
             invalidatesTags: ["TOUR"]
         }),
-        getAllTours: builder.query({
-            query: () => ({
-                url: "/tour",
-                method: "GET"
+        getAllTours: builder.query<
+            { data: ITourPackage[]; meta?: IMeta }, void>({
+                query: () => ({
+                    url: "/tour",
+                    method: "GET",
+                }),
+                providesTags: ["TOUR"],
+                transformResponse: (response: IResponse<ITourPackage[]>) => {
+                    return {
+                        data: response.data,
+                        meta: response.meta,
+                    };
+                },
             }),
-            providesTags: ["TOUR"]
-        }),
         AddTourType: builder.mutation({
             query: (tourTypeName) => ({
                 url: "/tour/create-tour-type",

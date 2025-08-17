@@ -66,7 +66,7 @@ export default function Tours() {
               </div>
 
               <Button asChild className='w-full'>
-                <Link to={`/tours/${item.slug}`}>View Details</Link>
+                <Link to={`/tours/${item._id}`}>View Details</Link>
               </Button>
             </div>
           </div>
