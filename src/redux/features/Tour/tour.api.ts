@@ -1,4 +1,6 @@
 import { baseApi } from "@/redux/baseApi";
+import type { IMeta, IResponse, ITourPackage } from "@/types";
+import type { ITourType } from "@/types/tour.type";
 
 
 export const tourApi = baseApi.injectEndpoints({
@@ -9,22 +11,39 @@ export const tourApi = baseApi.injectEndpoints({
                 method: "POST",
                 data: tourData
             }),
+            invalidatesTags: ["TOUR"]
         }),
+        getAllTours: builder.query<
+            { data: ITourPackage[]; meta?: IMeta }, unknown>({
+                query: (params) => ({
+                    url: "/tour",
+                    method: "GET",
+                    params
+                }),
+                providesTags: ["TOUR"],
+                transformResponse: (response: IResponse<ITourPackage[]>) => {
+                    return {
+                        data: response.data,
+                        meta: response.meta,
+                    };
+                },
+            }),
         AddTourType: builder.mutation({
             query: (tourTypeName) => ({
                 url: "/tour/create-tour-type",
                 method: "POST",
                 data: tourTypeName
             }),
-            invalidatesTags: ["TOUR"]
+            invalidatesTags: ["TOUR-TYPE"]
         }),
-        getTourTypes: builder.query({
-            query: () => ({
+        getTourTypes: builder.query<{ data: ITourType[], meta?: IMeta }, unknown>({
+            query: (params) => ({
                 url: "/tour/tour-types",
-                method: "GET"
+                method: "GET",
+                params
             }),
-            providesTags: ["TOUR"],
-            transformResponse: (response) => {
+            providesTags: ["TOUR-TYPE"],
+            transformResponse: (response: IResponse<ITourType[]>) => {
                 return {
                     data: response.data,
                     meta: response.meta
@@ -36,13 +55,14 @@ export const tourApi = baseApi.injectEndpoints({
                 url: `/tour/tour-types/${tourTypeId}`,
                 method: "DELETE"
             }),
-            invalidatesTags: ["TOUR"]
+            invalidatesTags: ["TOUR-TYPE"]
         })
     })
 })
 
 export const {
     useAddTourMutation,
+    useGetAllToursQuery,
     useAddTourTypeMutation,
     useGetTourTypesQuery,
     useRemoveTourTypeMutation
